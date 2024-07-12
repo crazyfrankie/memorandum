@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -36,6 +37,7 @@ func CreateTaskHandler() gin.HandlerFunc {
 
 		if err := taskService.TaskCreate(c.Request.Context(), &task); err != nil {
 			c.JSON(http.StatusInternalServerError, ErrorResponse(err))
+			return
 		}
 
 		c.JSON(http.StatusOK, task)
@@ -55,12 +57,17 @@ func CreateTaskHandler() gin.HandlerFunc {
 func ShowTaskHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var task model.ShowTaskReq
-		if err := c.ShouldBindQuery(&task); err != nil {
+
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+
+		if err := c.ShouldBind(&task); err != nil {
 			util.LogrusObj.Info(err)
 			c.JSON(http.StatusBadRequest, ErrorResponse(err))
 			return
 		}
 
+		task.Id = uint(id)
 		resp, err := taskService.ShowTask(c.Request.Context(), &task)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, ErrorResponse(err))
@@ -81,7 +88,7 @@ func ShowTaskHandler() gin.HandlerFunc {
 // @Success 200 {object} ctl.DataResponse
 // @Failure 400 {object} ctl.ErrResponse
 // @Failure 500 {object} ctl.ErrResponse
-// @Router /v1/tasks [get]
+// @Router /v1/tasks/list [get]
 func ListHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.ListTasksReq
@@ -117,13 +124,18 @@ func ListHandler() gin.HandlerFunc {
 func DeleteHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.DeleteTaskReq
+
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+
 		if err := c.ShouldBindQuery(&req); err != nil {
 			util.LogrusObj.Info(err)
 			c.JSON(http.StatusBadRequest, ErrorResponse(err))
 			return
 		}
 
-		_, err := taskService.DeleteTask(c.Request.Context(), &req)
+		req.Id = uint(id)
+		_, err = taskService.DeleteTask(c.Request.Context(), &req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, ErrorResponse(err))
 			return
@@ -146,12 +158,17 @@ func DeleteHandler() gin.HandlerFunc {
 func TaskUpdate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.UpdateTaskReq
+
+		idStr := c.Param("id")
+		id, err := strconv.Atoi(idStr)
+
 		if err := c.ShouldBind(&req); err != nil {
 			util.LogrusObj.Info(err)
 			c.JSON(http.StatusBadRequest, ErrorResponse(err))
 			return
 		}
 
+		req.ID = uint(id)
 		resp, err := taskService.UpdateTask(c.Request.Context(), &req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, ErrorResponse(err))

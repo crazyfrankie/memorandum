@@ -44,7 +44,6 @@ func SetRoute(r *gin.Engine) {
 			authed.POST("", controller.CreateTaskHandler())   // 创建任务
 			authed.DELETE("/:id", controller.DeleteHandler()) // 删除任务
 			authed.PUT("/:id", controller.TaskUpdate())       // 更新任务
-
 		}
 	}
 }
