@@ -1,0 +1,295 @@
+definitions:
+  ctl.DataResponse:
+    properties:
+      data: {}
+      msg: {}
+    type: object
+  ctl.ErrResponse:
+    properties:
+      err:
+        type: string
+    type: object
+  ctl.TokenResponse:
+    properties:
+      data: {}
+      msg: {}
+      user: {}
+    type: object
+  model.CreateTaskReq:
+    properties:
+      content:
+        maxLength: 1000
+        type: string
+      status:
+        description: 0 待办   1已完成
+        type: integer
+      title:
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - title
+    type: object
+  model.LoginData:
+    properties:
+      name:
+        example: frank
+        maxLength: 15
+        minLength: 3
+        type: string
+      password:
+        example: frank666
+        maxLength: 16
+        minLength: 5
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  model.Task:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      endTime:
+        type: integer
+      id:
+        type: integer
+      startTime:
+        type: integer
+      status:
+        type: integer
+      title:
+        type: string
+      uid:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+    type: object
+  model.User:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/tasks:
+    get:
+      description: 获取分页任务列表
+      parameters:
+      - description: 起始页
+        in: query
+        name: start
+        required: true
+        type: integer
+      - description: 每页限制数
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ctl.DataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+      summary: 获取分页任务列表
+      tags:
+      - 任务
+    post:
+      consumes:
+      - application/json
+      description: 创建任务
+      parameters:
+      - description: 创建任务请求体
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTaskReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+      summary: 创建任务
+      tags:
+      - 任务
+  /v1/tasks/{id}:
+    delete:
+      description: 删除任务
+      parameters:
+      - description: 任务ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ctl.DataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+      summary: 删除任务
+      tags:
+      - 任务
+    get:
+      description: 获取单个任务
+      parameters:
+      - description: 任务ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+      summary: 获取单个任务
+      tags:
+      - 任务
+  /v1/tasks/search:
+    get:
+      description: 搜索关键词任务
+      parameters:
+      - description: 搜索关键词
+        in: query
+        name: info
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Task'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+      summary: 搜索关键词任务
+      tags:
+      - 任务
+  /v1/user/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录
+      parameters:
+      - description: 登录信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ctl.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+      summary: 用户登录
+      tags:
+      - 用户
+  /v1/user/register:
+    post:
+      consumes:
+      - application/json
+      description: 用户注册
+      parameters:
+      - description: 注册信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: register successfully
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ctl.ErrResponse'
+      summary: 用户注册
+      tags:
+      - 用户
+swagger: "2.0"

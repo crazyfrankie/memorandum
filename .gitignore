@@ -1,0 +1,8 @@
+# Ignore .idea
+.idea/
+
+# Ignore config
+config/config.ini
+
+# Ignore logs
+logs/
