@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"memorandum/docs"
 
@@ -15,9 +13,6 @@ import (
 
 func NewRouter() *gin.Engine {
 	router := gin.Default()
-
-	store := cookie.NewStore([]byte("something-very-secret"))
-	router.Use(sessions.Sessions("mysession", store))
 
 	SetRoute(router)
 
