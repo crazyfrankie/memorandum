@@ -10,7 +10,7 @@ var (
 	HttpPort string
 
 	RedisAddress string
-	RedisDB      int
+	RedisDB      string
 
 	User     string
 	Password string
@@ -36,11 +36,7 @@ func LoadServer(file *ini.File) {
 
 func LoadRedis(file *ini.File) {
 	RedisAddress = file.Section("redis").Key("RedisAddress").String()
-	var err error
-	RedisDB, err = file.Section("redis").Key("RedisDB").Int()
-	if err != nil {
-		log.Fatal(err)
-	}
+	RedisDB = file.Section("redis").Key("RedisDB").String()
 }
 
 func LoadMysql(file *ini.File) {
