@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"memorandum/repository/cache"
 	"net/http"
 	"os"
 	"os/signal"
@@ -64,6 +65,9 @@ func loading() {
 
 	// 初始化数据库
 	dao.InitDB()
+
+	// 初始化redis
+	cache.InitRedis()
 
 	// 初始化日志
 	util.InitLog()

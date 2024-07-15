@@ -1,9 +1,8 @@
 package config
 
 import (
-	"log"
-
 	"github.com/go-ini/ini"
+	"log"
 )
 
 var (
@@ -11,7 +10,7 @@ var (
 	HttpPort string
 
 	RedisAddress string
-	RedisDB      string
+	RedisDB      int
 
 	User     string
 	Password string
@@ -27,11 +26,21 @@ func Init() {
 	}
 	LoadServer(file)
 	LoadMysql(file)
+	LoadRedis(file)
 }
 
 func LoadServer(file *ini.File) {
 	AppMode = file.Section("service").Key("AppMode").String()
 	HttpPort = file.Section("service").Key("port").String()
+}
+
+func LoadRedis(file *ini.File) {
+	RedisAddress = file.Section("redis").Key("RedisAddress").String()
+	var err error
+	RedisDB, err = file.Section("redis").Key("RedisDB").Int()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func LoadMysql(file *ini.File) {
