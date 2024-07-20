@@ -1,6 +1,8 @@
 package model
 
 import (
+	"memorandum/repository/cache"
+	"strconv"
 	"time"
 )
 
@@ -57,4 +59,16 @@ type TaskResp struct {
 	CreatedAt int64  `json:"created_at"`
 	StartTime int64  `json:"start_time"`
 	EndTime   int64  `json:"end_time"`
+}
+
+func (t *Task) View() uint64 {
+	// 增加点击数
+	countStr, _ := cache.RDB.Get(cache.TaskViewKey(t.ID)).Result()
+	count, _ := strconv.ParseUint(countStr, 10, 64)
+	return count
+}
+
+func (t *Task) AddView() {
+	cache.RDB.Incr(cache.TaskViewKey(t.ID))
+	cache.RDB.ZIncrBy(cache.RankKey, 1, strconv.Itoa(int(t.ID)))
 }

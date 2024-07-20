@@ -110,6 +110,7 @@ func (t *taskService) SearchTask(ctx context.Context, req *model.SearchTaskReq) 
 			Title:     task.Title,
 			Content:   task.Content,
 			Status:    task.Status,
+			View:      task.View(),
 			CreatedAt: task.CreatedAt.Unix(),
 			StartTime: task.StartTime,
 			EndTime:   task.EndTime,
