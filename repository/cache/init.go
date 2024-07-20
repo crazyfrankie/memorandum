@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-var rdb *redis.Client
+var RDB *redis.Client
 
 func InitRedis() {
 	db, err := strconv.Atoi(config.RedisDB)
@@ -16,12 +16,12 @@ func InitRedis() {
 		util.LogrusObj.Info(err)
 		return
 	}
-	rdb = redis.NewClient(&redis.Options{
+	RDB = redis.NewClient(&redis.Options{
 		Addr:     config.RedisAddress,
 		Password: "",
 		DB:       db,
 	})
-	pong, err := rdb.Ping().Result()
+	pong, err := RDB.Ping().Result()
 	if err != nil {
 		util.LogrusObj.Info(err)
 		return
