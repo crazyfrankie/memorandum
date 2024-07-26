@@ -22,6 +22,7 @@ func NewRouter() *gin.Engine {
 func SetRoute(r *gin.Engine) {
 	docs.SwaggerInfo.BasePath = "/v1"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.Use(middleware.Cors())
 	v1group := r.Group("v1")
 	{
 		userGroup := v1group.Group("/user")
